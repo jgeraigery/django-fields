@@ -43,7 +43,7 @@ class BaseEncryptedField(models.Field):
     def __init__(self, *args, **kwargs):
         self.cipher_type = kwargs.pop('cipher', 'AES')
         self.block_type = kwargs.pop('block_type', None)
-        self.secret_key = kwargs.pop('secret_key', settings.SECRET_KEY)
+        self.secret_key = kwargs.pop('secret_key', getattr(settings, 'ENCRYPTED_FIELDS_SECRET_KEY', None) or settings.SECRET_KEY)
         self.secret_key = self.secret_key[:32]
 
         if self.block_type is None:
