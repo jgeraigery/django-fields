@@ -66,7 +66,9 @@ class BaseEncryptedField(models.Field):
                 getattr(self.cipher_object, self.block_type),
                 self.iv)
         else:
-            self.cipher = self.cipher_object.new(self.secret_key)
+            # Note: Explicitly set default mode for pycryptodome.
+            # Warn: MODE_ECB is broken, but this is default for django-fields/pycrypto.
+            self.cipher = self.cipher_object.new(self.secret_key, getattr(self.cipher_object, "MODE_ECB"))
             self.prefix = '$%s$' % self.cipher_type
 
         self.original_max_length = max_length = kwargs.get('max_length', 40)
